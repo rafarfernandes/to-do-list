@@ -1,52 +1,166 @@
 {% extends 'menu.html' %}
 
 {% block content %}
-<main class="container py-5">
-    <div class="row">
-        <div class="col-sm-6 mb-3 mb-sm-0">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Special title treatment</h5>
-              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
+<style>
+  /* Estilos personalizados */
+  .hero {
+      background: linear-gradient(to right, #4e54c8, #8f94fb);
+      color: white;
+      text-align: center;
+      padding: 80px 20px;
+  }
+
+  .features {
+      padding: 50px 0;
+      background-color: #f8f9fa;
+  }
+
+  .feature-box {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+  }
+
+  .feature-box:hover {
+      transform: translateY(-5px);
+  }
+
+  .feature-box i {
+      color: #4e54c8;
+  }
+
+  /* Estilo do footer */
+  footer {
+      background: linear-gradient(to right, #4e54c8, #8f94fb);
+      color: white;
+      padding: 15px 0;
+      width: 100%;
+      text-align: center;
+  }
+
+  footer a {
+      color: #ffdd57;
+      text-decoration: none;
+  }
+
+  footer a:hover {
+      text-decoration: underline;
+  }
+
+  .social-icons a {
+      color: white;
+      margin: 0 15px;
+      font-size: 1.5rem;
+  }
+
+  .social-icons a:hover {
+      color: #ffdd57;
+  }
+
+  .footer-text {
+      font-size: 0.9rem;
+      color: white;
+  }
+
+  @media (max-width: 768px) {
+      .footer-text {
+          font-size: 0.8rem;
+      }
+
+      .social-icons {
+          margin-top: 10px;
+      }
+  }
+
+  /* Ajustes no conteúdo da página para fluidez e não ficar atrás do footer fixo */
+  .content {
+      padding-bottom: 20px; /* Espaço adequado para o footer */
+  }
+
+  /* Estilos para a seção do vídeo */
+  .video-section {
+      background-color: #f8f9fa;
+      padding: 50px 0;
+  }
+
+  .video-section h2 {
+      text-align: center;
+      color: #4e54c8;
+      margin-bottom: 30px;
+  }
+
+  .video-container {
+      text-align: center;
+  }
+
+  .video-container iframe {
+      width: 100%;
+      max-width: 800px;
+      height: 450px;
+      border: none;
+  }
+</style>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+      <h1 class="display-4 fw-bold">Organize sua rotina de forma simples</h1>
+      <p class="lead mt-3">Com esse gerenciador de tarefas, você terá total controle sobre seus compromissos e atividades diárias.</p>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features content">
+  <div class="container">
+      <div class="row g-4">
+          <div class="col-md-4">
+              <div class="feature-box text-center">
+                  <i class="bi bi-check-circle-fill fs-1"></i>
+                  <h3 class="mt-3">Fácil de Usar</h3>
+                  <p>Interface intuitiva e simplificada que permite organizar suas tarefas sem complicações.</p>
+              </div>
           </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Special title treatment</h5>
-              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
+          <div class="col-md-4">
+              <div class="feature-box text-center">
+                  <i class="bi bi-clock-fill fs-1"></i>
+                  <h3 class="mt-3">Economize Tempo</h3>
+                  <p>Planeje seu dia e maximize sua produtividade com ferramentas eficientes.</p>
+              </div>
           </div>
-        </div>
+          <div class="col-md-4">
+              <div class="feature-box text-center">
+                  <i class="bi bi-shield-fill-check fs-1"></i>
+                  <h3 class="mt-3">Segurança</h3>
+                  <p>Mantenha seus dados seguros com práticas avançadas de proteção e privacidade.</p>
+              </div>
+          </div>
       </div>
+  </div>
+</section>
 
-      <p>
+<!-- Video Section -->
+<section class="video-section">
+  <div class="container">
+      <h2>Explicação e Utilização do To-Do List</h2>
+      <div class="video-container">
+          <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="Explicação do To-Do List" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+  </div>
+</section>
 
+<!-- Footer -->
+<footer>
+  <div class="container">
       <div class="row">
-        <div class="col-sm-6 mb-3 mb-sm-0">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Special title treatment</h5>
-              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
+          <div class="col-12">
+              <p class="footer-text mb-2">© 2024 Gerenciador de Tarefas. Todos os direitos reservados.</p>
+              <p class="footer-text mb-2">Desenvolvido por <a href="https://github.com/seu-username" target="_blank">Rafael Fernandes</a></p>
           </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Special title treatment</h5>
-              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-          </div>
-        </div>
       </div>
-
-    
-</main>
+  </div>
+</footer>
 
 {% endblock %}

@@ -1,50 +1,73 @@
 {% extends 'menu.html' %}
 
 {% block content %}
-<main class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg rounded">
-                <div class="card-header bg-primary text-white text-center">
-                    <h2>Criar Tarefa</h2>
+<main class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg rounded" style="background-color: #f0f4f8;">
+            <div class="card-header text-center py-3" style="background-color: #007bff; color: #ffffff;">
+                <h2 class="mb-0">{{ task|default:''|yesno:"Editar Tarefa,Criar Tarefa" }}</h2>
+            </div>
+            <div class="card-body">
+                <!-- Exibição de erros -->
+                {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div class="card-body">
-                    {% if error %}
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                {% endif %}
+
+                <!-- Formulário -->
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- Título -->
+                    <div class="mb-4">
+                        <label for="title" class="form-label fw-bold" style="color: #007bff;">Título</label>
+                        <input type="text" name="title" id="title" class="form-control form-control-lg" placeholder="Digite o título da tarefa" value="{{ form.title.value|default:'' }}" required>
                     </div>
-                    {% endif %}
-                    
-                    <form action="/criando/tarefa/" method="POST">
-                        {% csrf_token %}
 
-                        <div class="mb-4">
-                            <label for="title" class="form-label fw-bold">Título</label>
-                            <input type="text" name="title" class="form-control form-control-lg border-primary" id="title" placeholder="Digite o título da tarefa" required>
-                        </div>
+                    <!-- Descrição -->
+                    <div class="mb-4">
+                        <label for="description" class="form-label fw-bold" style="color: #007bff;">Descrição</label>
+                        <textarea name="description" id="description" rows="5" class="form-control form-control-lg" placeholder="Digite a descrição da tarefa" required>{{ form.description.value|default:'' }}</textarea>
+                    </div>
 
-                        <div class="mb-4">
-                            <label for="describe" class="form-label fw-bold">Descrição</label>
-                            <textarea class="form-control form-control-lg border-primary" id="describe" name="describe" rows="4" placeholder="Descreva a tarefa" required></textarea>
-                        </div>
+                    <!-- Data de Entrega -->
+                    <div class="mb-4">
+                        <label for="due_date" class="form-label fw-bold" style="color: #007bff;">Data de Entrega</label>
+                        <input type="date" name="due_date" id="due_date" class="form-control form-control-lg" value="{{ form.due_date.value|default:'' }}" required>
+                    </div>
 
-                        <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" value="1" id="important" name="important">
-                            <label class="form-check-label" for="important">
-                                Marcar como Importante
-                            </label>
-                        </div>
+                    <!-- Status -->
+                    <div class="mb-4">
+                        <label for="status" class="form-label fw-bold" style="color: #007bff;">Status</label>
+                        <select name="status" id="status" class="form-select form-select-lg" required>
+                            <option value="pendente" {% if form.status.value == "pendente" %}selected{% endif %}>Pendente</option>
+                            <option value="completa" {% if form.status.value == "completa" %}selected{% endif %}>Completa</option>
+                        </select>
+                    </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-check-circle me-2"></i> Salvar Tarefa
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <!-- Data de Criação (editable) -->
+                    <div class="mb-4">
+                        <label for="created_at" class="form-label fw-bold" style="color: #007bff;">Data de Criação</label>
+                        <input type="datetime-local" name="created_at" id="created_at" class="form-control form-control-lg" value="{{ task.created_at|date:'Y-m-d\TH:i' }}" required>
+                    </div>
+
+                    <!-- Data de Atualização (editable) -->
+                    <div class="mb-4">
+                        <label for="updated_at" class="form-label fw-bold" style="color: #007bff;">Data de Atualização</label>
+                        <input type="datetime-local" name="updated_at" id="updated_at" class="form-control form-control-lg" value="{{ task.updated_at|date:'Y-m-d\TH:i' }}" required>
+                    </div>
+
+                    <!-- Botão de ação -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg fw-semibold" style="background-color: #007bff; border-color: #0056b3;">
+                            {{ task|default:''|yesno:"Atualizar Tarefa,Salvar Tarefa" }}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </main>
-{% endblock %}
+{% endblock %} 

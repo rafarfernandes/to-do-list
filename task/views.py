@@ -78,25 +78,29 @@ def sair(request):
 def tasks(request):
     return render(request,'tasks.html')
 
-@login_required   
-def  criando_tarefa(request):
-    if request.method == 'GET':
-        return render(request, 'criando_tarefa.html',{
-            'form' : TaskForm
-        })
+@login_required
+def criando_tarefa(request, task_id=None):
+    if task_id:
+        task = get_object_or_404(Task, id=task_id, user=request.user)
     else:
-        try:
-            form = TaskForm(request.POST)
+        task = None
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
             new_task = form.save(commit=False)
             new_task.user = request.user
+            new_task.updated = timezone.now()
+            if not task:
+                new_task.created = timezone.now()  # Apenas cria um novo timestamp se for uma nova tarefa
             new_task.save()
-            return redirect('tasks')
-        
-        except ValueError:
-            return render(request, 'criando_terefa.html',{
-                'form' : TaskForm,
-                'error' : 'Favor criar tarefa'
-            })
+            return redirect('tasks')  # Redireciona para a lista de tarefas
+        else:
+            return render(request, 'criando_tarefa.html', {'form': form, 'task': task, 'error': 'Erro ao salvar a tarefa'})
+    else:
+        form = TaskForm(instance=task)
+        return render(request, 'criando_tarefa.html', {'form': form, 'task': task})
+
 
 @login_required   
 def tasks(request):
@@ -105,41 +109,39 @@ def tasks(request):
 
 @login_required  
 def task_detalhe(request, task_id): 
-
     if request.method == 'GET':
-        task = get_object_or_404(Task, pk=task_id, user=request.user)  # tenho que importar o get_object_or_404 serve para so ids das tarefas
+        task = get_object_or_404(Task, pk=task_id, user=request.user)
         form = TaskForm(instance=task)
-        return render(request,'task_detalhe.html', {'task': task, 'form': form}) 
+        return render(request, 'task_detalhe.html', {
+            'task': task,
+            'form': form,
+            'created': task.created,
+            'updated': task.updated,
+            'status': task.status
+        }) 
 
-    else:  
-        try: 
-            task = get_object_or_404(Task, pk=task_id, user=request.user)
-            form = TaskForm(request.POST, instance=task)
-            form.save()
-            return redirect('tasks')
-
-        except ValueError:
-            return render(request,'task_detalhe.html', {'task': task, 'form': form,
-            'error': "Erro ao atualizar a tarefa"}) 
 
 #completar tarefa
-@login_required  
+@login_required
 def complete_tarefa(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user=request.user)
 
     if request.method == 'POST':
         task.datecompleted = timezone.now()
+        task.status = 'completa'  # Alterando o status da tarefa
         task.save()
         return redirect('tasks')
 
+
 #deletar tarefa
-@login_required  
+@login_required
 def deletar_tarefa(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user=request.user)
 
     if request.method == 'POST':
         task.delete()
         return redirect('tasks')
+
 
 
 #exibir todas as tarefas completadas

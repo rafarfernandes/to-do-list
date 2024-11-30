@@ -2,42 +2,58 @@
 
 {% block content %}
 
-<main class="container mt-5">
+<main class="container-fluid d-flex justify-content-center align-items-center min-vh-100" style="background-color: #f8f9fa;">
+    <div class="register-wrapper w-100 d-flex justify-content-center">
+        <div class="register-card p-5 shadow-lg" style="background-color: #f8f9fa; width: 100%; max-width: 450px; border-radius: 10px;">
+            <!-- Título -->
+            <div class="register-header text-center mb-4">
+                <h1 style="color: #333333; font-weight: bold;">Cadastrar</h1>
+            </div>
 
-    <div class="row">
-
-        <div class="col-md-5 offset-md-3">
-
-            <form method="POST" class="card card-body shadow-lg p-4 rounded">
-
+            <!-- Exibição de erros -->
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
                 {{ error }}
+            </div>
+            {% endif %}
 
+            <!-- Formulário -->
+            <form method="POST" action="/register/">
                 {% csrf_token %}
 
-                <h1 class="text-center text-warning mb-4">Cadastrar</h1>
-
-                <div class="mb-3">
-                    <label for="username" class="form-label">Nome</label>
-                    <input type="text" name="username" class="form-control" placeholder="Digite seu nome">
+                <div class="form-group mb-4">
+                    <label for="username" style="color: #333333; font-weight: bold;">Nome</label>
+                    <input type="text" name="username" class="form-control form-control-lg" id="username" placeholder="Digite seu nome" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="password1" class="form-label">Senha</label>
-                    <input type="password" name="password1" class="form-control" id="password1" placeholder="Digite sua senha">
+                <div class="form-group mb-4">
+                    <label for="password1" style="color: #333333; font-weight: bold;">Senha</label>
+                    <input type="password" name="password1" class="form-control form-control-lg" id="password1" placeholder="Digite sua senha" required>
                 </div>
 
-                <div class="mb-3">
-                    <label for="password2" class="form-label">Confirmar Senha</label>
-                    <input type="password" class="form-control" name="password2" id="password2" placeholder="Confirme sua senha">
+                <div class="form-group mb-4">
+                    <label for="password2" style="color: #333333; font-weight: bold;">Confirmar Senha</label>
+                    <input type="password" name="password2" class="form-control form-control-lg" id="password2" placeholder="Confirme sua senha" required>
                 </div>
 
-                <button type="submit" class="btn btn-warning w-100 mt-3">Cadastrar</button>
-
+                <!-- Botão Cadastrar -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary w-100 mt-4 py-2 fs-5 fw-semibold" style="background-color: #007bff; color: #ffffff; font-weight: bold;">
+                        Cadastrar
+                    </button>
+                </div>
             </form>
+
+            <!-- Link para Login -->
+            <div class="card-footer text-center mt-4">
+                <small style="color: #333333;">Já tem uma conta? 
+                    <a href="/login_view" style="color: #007bff; font-weight: bold; text-decoration: none;">
+                        Faça login aqui
+                    </a>
+                </small>
+            </div>
         </div>
-
     </div>
-
 </main>
 
 {% endblock %}
