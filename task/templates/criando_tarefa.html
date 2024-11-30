@@ -1,0 +1,50 @@
+{% extends 'menu.html' %}
+
+{% block content %}
+<main class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg rounded">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2>Criar Tarefa</h2>
+                </div>
+                <div class="card-body">
+                    {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+                    
+                    <form action="/criando/tarefa/" method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-bold">Título</label>
+                            <input type="text" name="title" class="form-control form-control-lg border-primary" id="title" placeholder="Digite o título da tarefa" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="describe" class="form-label fw-bold">Descrição</label>
+                            <textarea class="form-control form-control-lg border-primary" id="describe" name="describe" rows="4" placeholder="Descreva a tarefa" required></textarea>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" value="1" id="important" name="important">
+                            <label class="form-check-label" for="important">
+                                Marcar como Importante
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i> Salvar Tarefa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

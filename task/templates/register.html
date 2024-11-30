@@ -1,48 +1,43 @@
 {% extends 'menu.html' %}
 
-
 {% block content %}
 
-    <main class="container mt-5">
+<main class="container mt-5">
 
-        <div class="row">
+    <div class="row">
 
-            <div class="col-md-5 offset-md-3">
+        <div class="col-md-5 offset-md-3">
 
-                    <form method="POST" class="card card-body">
+            <form method="POST" class="card card-body shadow-lg p-4 rounded">
 
-                        {{ error }}
+                {{ error }}
 
-                        {% csrf_token %}
+                {% csrf_token %}
 
-                        <h1 class="text-center">  Cadastrar </h1>
+                <h1 class="text-center text-warning mb-4">Cadastrar</h1>
 
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Nome</label>
-                            <input type="text" name="username" class="form-control">
-                        
-
-                        </div>
-
-
-                        <div class="mb-3">
-                            <label for="password1" class="form-label">Senha</label>
-                            <input type="password" name="password1" class="form-control" id="password1">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password2" class="form-label">Confirmar Senha</label>
-                            <input type="password" class="form-control" name="password2" id="password2">
-                        </div>
-                    
-                        <button type="submit" class="btn btn-primary"> Cadastrar</button>
-
-
-                    </form>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nome</label>
+                    <input type="text" name="username" class="form-control" placeholder="Digite seu nome">
                 </div>
 
+                <div class="mb-3">
+                    <label for="password1" class="form-label">Senha</label>
+                    <input type="password" name="password1" class="form-control" id="password1" placeholder="Digite sua senha">
+                </div>
+
+                <div class="mb-3">
+                    <label for="password2" class="form-label">Confirmar Senha</label>
+                    <input type="password" class="form-control" name="password2" id="password2" placeholder="Confirme sua senha">
+                </div>
+
+                <button type="submit" class="btn btn-warning w-100 mt-3">Cadastrar</button>
+
+            </form>
         </div>
 
-        </main>        
+    </div>
+
+</main>
 
 {% endblock %}

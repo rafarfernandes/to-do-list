@@ -1,45 +1,43 @@
 {% extends 'menu.html' %}
 
-
-
 {% block content %}
-
-<main class="container mt-5">
-
-    <div class="row">
-
-        <div class="col-md-5 offset-md-3">
-
-                <form action="/login_view/" method="POST" class="card card-body">
-
-                    {{ error }}
-
-                    {% csrf_token %}
-
-                    <h1 class="text-center">  Logar </h1>
-
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Nome</label>
-                        <input type="text" name="username" class="form-control">
-                    
-
-                    </div>
-
-
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Senha</label>
-                        <input type="password" name="password" class="form-control" id="password">
-                    </div>
-
-                
-                    <button type="submit" class="btn btn-primary"> Logar </button>
-
-
-                </form>
+<main class="container-fluid d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(135deg, #0d0d0d, #1c1c1c);">
+    <div class="login-wrapper w-100 d-flex justify-content-center">
+        <div class="login-card p-4 shadow-sm" style="background-color: #1f1f1f; width: 100%; max-width: 400px; border-radius: 10px;">
+            <div class="login-header text-center mb-4">
+                <h2 style="color: #ffc107;">Login</h2>
+                <p style="color: #ffc107;">Acesse sua conta</p>
             </div>
 
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form action="/login_view/" method="POST">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label for="username" style="color: #ffc107;">Nome de Usuário</label>
+                    <input type="text" name="username" class="form-control form-control-lg" id="username" placeholder="Digite seu nome de usuário" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="password" style="color: #ffc107;">Senha</label>
+                    <input type="password" name="password" class="form-control form-control-lg" id="password" placeholder="Digite sua senha" required>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-warning w-100" style="background-color: #ffc107; color: #1c1c1c; font-weight: bold;">
+                        Entrar
+                    </button>
+                </div>
+            </form>
+
+            <div class="card-footer text-center mt-3">
+                <small style="color: #ffc107;">Não tem uma conta? <a href="{% url 'register' %}" style="color: #ffc107; font-weight: bold;">Cadastre-se</a></small>
+            </div>
+        </div>
     </div>
-
-    </main>        
-
+</main>
 {% endblock %}
