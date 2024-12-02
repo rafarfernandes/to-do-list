@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path, os 
+from pathlib import Path
+import os  
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -79,8 +81,16 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'to_do_list',
+        'HOST': 'localhost',
+        'PORT': 3306,
+        'USER': 'rafaelrff',
+        'PASSWORD': 'rfrafaelfernandesrodrigue23324335',
+        'OPTIONS': {
+            'charset' : 'utf8mb4',
+            'init_command' : "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
