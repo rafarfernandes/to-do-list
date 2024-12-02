@@ -93,14 +93,14 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'to_do_list',
-        'HOST': 'localhost',
-        'PORT': 3306,
-        'USER': 'rafaelrff',
-        'PASSWORD': 'rfrafaelfernandesrodrigue23324335',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
         'OPTIONS': {
-            'charset' : 'utf8mb4',
-            'init_command' : "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
