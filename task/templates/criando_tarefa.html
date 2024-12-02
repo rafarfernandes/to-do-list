@@ -8,60 +8,46 @@
                 <h2 class="mb-0">{{ task|default:''|yesno:"Editar Tarefa,Criar Tarefa" }}</h2>
             </div>
             <div class="card-body">
-                <!-- Exibição de erros -->
-                {% if error %}
+                {% if form.errors %}
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ error }}
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 {% endif %}
 
-                <!-- Formulário -->
                 <form method="POST">
                     {% csrf_token %}
-
-                    <!-- Título -->
                     <div class="mb-4">
-                        <label for="title" class="form-label fw-bold" style="color: #007bff;">Título</label>
-                        <input type="text" name="title" id="title" class="form-control form-control-lg" placeholder="Digite o título da tarefa" value="{{ form.title.value|default:'' }}" required>
+                        <label for="title" class="form-label fw-bold">Título</label>
+                        {{ form.title }}
                     </div>
-
-                    <!-- Descrição -->
                     <div class="mb-4">
-                        <label for="description" class="form-label fw-bold" style="color: #007bff;">Descrição</label>
-                        <textarea name="description" id="description" rows="5" class="form-control form-control-lg" placeholder="Digite a descrição da tarefa" required>{{ form.description.value|default:'' }}</textarea>
+                        <label for="describe" class="form-label fw-bold">Descrição</label>
+                        {{ form.describe }}
                     </div>
-
-                    <!-- Data de Entrega -->
                     <div class="mb-4">
-                        <label for="due_date" class="form-label fw-bold" style="color: #007bff;">Data de Entrega</label>
-                        <input type="date" name="due_date" id="due_date" class="form-control form-control-lg" value="{{ form.due_date.value|default:'' }}" required>
+                        <label for="datecompleted" class="form-label fw-bold">Data de Conclusão (opcional)</label>
+                        {{ form.datecompleted }}
                     </div>
-
-                    <!-- Status -->
                     <div class="mb-4">
-                        <label for="status" class="form-label fw-bold" style="color: #007bff;">Status</label>
-                        <select name="status" id="status" class="form-select form-select-lg" required>
-                            <option value="pendente" {% if form.status.value == "pendente" %}selected{% endif %}>Pendente</option>
-                            <option value="completa" {% if form.status.value == "completa" %}selected{% endif %}>Completa</option>
-                        </select>
+                        <label for="status" class="form-label fw-bold">Status</label>
+                        {{ form.status }}
                     </div>
-
-                    <!-- Data de Criação (editable) -->
                     <div class="mb-4">
-                        <label for="created_at" class="form-label fw-bold" style="color: #007bff;">Data de Criação</label>
-                        <input type="datetime-local" name="created_at" id="created_at" class="form-control form-control-lg" value="{{ task.created_at|date:'Y-m-d\TH:i' }}" required>
+                        <label for="important" class="form-label fw-bold">Importante</label>
+                        {{ form.important }}
                     </div>
-
-                    <!-- Data de Atualização (editable) -->
-                    <div class="mb-4">
-                        <label for="updated_at" class="form-label fw-bold" style="color: #007bff;">Data de Atualização</label>
-                        <input type="datetime-local" name="updated_at" id="updated_at" class="form-control form-control-lg" value="{{ task.updated_at|date:'Y-m-d\TH:i' }}" required>
-                    </div>
-
-                    <!-- Botão de ação -->
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg fw-semibold" style="background-color: #007bff; border-color: #0056b3;">
+                        <button type="submit" class="btn btn-primary">
                             {{ task|default:''|yesno:"Atualizar Tarefa,Salvar Tarefa" }}
                         </button>
                     </div>
@@ -70,4 +56,4 @@
         </div>
     </div>
 </main>
-{% endblock %} 
+{% endblock %}

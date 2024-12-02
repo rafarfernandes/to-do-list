@@ -9,10 +9,10 @@ class Task(models.Model):
 
     title = models.CharField(max_length=100)
     describe = models.TextField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)  # Define automaticamente a data de criação
-    updated = models.DateTimeField(auto_now=True)  # Atualiza automaticamente ao salvar
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     datecompleted = models.DateTimeField(null=True, blank=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')  # Campo de status
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
     important = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

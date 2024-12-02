@@ -1,53 +1,85 @@
 {% extends 'menu.html' %}
 
 {% block content %}
-
-<main class="container-fluid d-flex justify-content-center align-items-center min-vh-100" style="background-color: #f8f9fa;">
+<main class="container-fluid d-flex justify-content-center align-items-center min-vh-100" style="background-color: white;">
     <div class="register-wrapper w-100 d-flex justify-content-center">
-        <div class="register-card p-5 shadow-lg" style="background-color: #f8f9fa; width: 100%; max-width: 450px; border-radius: 10px;">
-            <!-- Título -->
+        <div class="register-card p-5 shadow-lg bg-light rounded" style="width: 100%; max-width: 450px;">
             <div class="register-header text-center mb-4">
-                <h1 style="color: #333333; font-weight: bold;">Cadastrar</h1>
+                <h2 class="text-dark font-weight-bold">Cadastrar</h2>
+                <p class="text-secondary">Crie uma conta para começar</p>
             </div>
 
-            <!-- Exibição de erros -->
-            {% if error %}
-            <div class="alert alert-danger" role="alert">
-                {{ error }}
+            {% if messages %}
+            <div class="alert alert-success" role="alert">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
             </div>
             {% endif %}
 
-            <!-- Formulário -->
-            <form method="POST" action="/register/">
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST">
                 {% csrf_token %}
-
+                
                 <div class="form-group mb-4">
-                    <label for="username" style="color: #333333; font-weight: bold;">Nome</label>
-                    <input type="text" name="username" class="form-control form-control-lg" id="username" placeholder="Digite seu nome" required>
+                    <label for="username" class="text-dark font-weight-bold">Nome de Usuário</label>
+                    <input type="text" name="username" class="form-control form-control-lg" id="username" 
+                           placeholder="Digite seu nome de usuário" 
+                           value="{{ form.username.value|default:'' }}" 
+                           required aria-describedby="usernameHelp">
+                    <small id="usernameHelp" class="form-text text-muted">Seu nome de usuário deve ser único.</small>
+                    {% if form.username.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
 
                 <div class="form-group mb-4">
-                    <label for="password1" style="color: #333333; font-weight: bold;">Senha</label>
-                    <input type="password" name="password1" class="form-control form-control-lg" id="password1" placeholder="Digite sua senha" required>
+                    <label for="password1" class="text-dark font-weight-bold">Senha</label>
+                    <input type="password" name="password1" class="form-control form-control-lg" id="password1" 
+                           placeholder="Digite sua senha" required>
+                    {% if form.password1.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.password1.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
 
                 <div class="form-group mb-4">
-                    <label for="password2" style="color: #333333; font-weight: bold;">Confirmar Senha</label>
-                    <input type="password" name="password2" class="form-control form-control-lg" id="password2" placeholder="Confirme sua senha" required>
+                    <label for="password2" class="text-dark font-weight-bold">Confirmação da Senha</label>
+                    <input type="password" name="password2" class="form-control form-control-lg" id="password2" 
+                           placeholder="Confirme sua senha" required>
+                    {% if form.password2.errors %}
+                    <div class="invalid-feedback d-block">
+                        {% for error in form.password2.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
 
-                <!-- Botão Cadastrar -->
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary w-100 mt-4 py-2 fs-5 fw-semibold" style="background-color: #007bff; color: #ffffff; font-weight: bold;">
+                <div class="form-group mb-4">
+                    <button type="submit" class="btn btn-primary w-100 font-weight-bold">
                         Cadastrar
                     </button>
                 </div>
             </form>
 
-            <!-- Link para Login -->
             <div class="card-footer text-center mt-4">
-                <small style="color: #333333;">Já tem uma conta? 
-                    <a href="/login_view" style="color: #007bff; font-weight: bold; text-decoration: none;">
+                <small class="text-secondary">Já tem uma conta? 
+                    <a href="{% url 'login_view' %}" class="text-primary font-weight-bold text-decoration-underline">
                         Faça login aqui
                     </a>
                 </small>
@@ -55,5 +87,4 @@
         </div>
     </div>
 </main>
-
 {% endblock %}

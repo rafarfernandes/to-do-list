@@ -1,0 +1,29 @@
+{% extends 'menu.html' %}
+
+{% block content %}
+<main class="container mt-5">
+    <h1 class="text-center text-success">Tarefas Concluídas</h1>
+
+    {% if tasks %}
+        {% for task in tasks %}
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h4 class="card-title text-dark fw-bold">{{ task.title }}</h4>
+                    <p class="text-muted">{{ task.describe }}</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Concluída em:</strong> {{ task.datecompleted|date:"d/m/Y H:i" }}</li>
+                    </ul>
+                    <form method="post" action="{% url 'delete_task' task.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center">
+            <strong>Sem tarefas concluídas!</strong>
+        </div>
+    {% endif %}
+</main>
+{% endblock %}

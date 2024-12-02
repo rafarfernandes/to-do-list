@@ -1,69 +1,33 @@
 {% extends 'menu.html' %}
 
 {% block content %}
-
 <main class="container mt-5">
-    <div class="row">
-        <div class="col-lg-8 col-md-10 col-12 offset-lg-2">
+    <h1 class="text-center text-primary">Tarefas</h1>
 
-            <h1 class="text-center mb-4 text-primary">Tarefas</h1>
 
-            {% if error %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ error }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endif %}
-
-            {% for task in tasks %}
-                <div class="card mb-3 shadow-sm rounded">
-                    <div class="card-body">
-                        <!-- Título da tarefa -->
-                        <h4 class="card-title text-dark fw-bold">{{ task.title }}</h4>
-                        
-                        <!-- Descrição -->
-                        <p class="card-text text-muted">{{ task.describe }}</p>
-
-                        <!-- Informações adicionais -->
-                        <ul class="list-unstyled text-muted">
-                            <li><strong>Status:</strong> {{ task.status|title }}</li>
-                            <li><strong>Criada em:</strong> {{ task.created|date:"d/m/Y H:i" }}</li>
-                            <li><strong>Última atualização:</strong> {{ task.updated|date:"d/m/Y H:i" }}</li>
-                        </ul>
-
-                        <!-- Botões de ação -->
-                        <div class="d-flex justify-content-between mt-3">
-                            <form action="{% url 'complete_tarefa' task.id %}" method="POST" class="w-48">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-success w-100">
-                                    Completar
-                                </button>
-                            </form>
-
-                            <form action="{% url 'deletar_tarefa' task.id %}" method="POST" class="w-48">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-danger w-100">
-                                    Deletar
-                                </button>
-                            </form>
-
-                            <!-- Link para editar a tarefa -->
-                            <a href="{% url 'editar_tarefa' task.id %}" class="btn btn-outline-warning w-100">
-                                Editar
-                            </a>
-                            
-                        </div>
+    <!-- Lista de Tarefas -->
+    {% if tasks %}
+        {% for task in tasks %}
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h4 class="card-title text-dark fw-bold">{{ task.title }}</h4>
+                    <p class="text-muted">{{ task.describe }}</p>
+                    <ul class="list-unstyled">
+                        <li><strong>Criada:</strong> {{ task.created|date:"d/m/Y H:i" }}</li>
+                        <li><strong>Última atualização:</strong> {{ task.updated|date:"d/m/Y H:i" }}</li>
+                        <li><strong>Status:</strong> {{ task.get_status_display }}</li>
+                    </ul>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'task_detail' task.pk %}" class="btn btn-info btn-sm">Detalhes</a>
+                        <a href="{% url 'edit_task' task.pk %}" class="btn btn-warning btn-sm">Editar</a>
                     </div>
                 </div>
-            {% empty %}
-                <!-- Mensagem para quando não há tarefas -->
-                <div class="alert alert-info text-center">
-                    <strong>Sem tarefas pendentes!</strong>
-                </div>
-            {% endfor %}
-
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center">
+            <strong>Não há tarefas no momento.</strong>
         </div>
-    </div>
+    {% endif %}
 </main>
-
 {% endblock %}

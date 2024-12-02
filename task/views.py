@@ -1,152 +1,166 @@
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import login, logout, authenticate
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .forms import TaskForm
-from .models import Task
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.views import LoginView, LogoutView
 from django.utils import timezone
+from django.views.generic import CreateView, UpdateView, ListView, DeleteView, DetailView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from .models import Task
+from .forms import TaskForm
+from django.contrib import messages
 
 
+
+# Função para renderizar a página inicial
 def home(request):
-    return render(request,'home.html')
+    return render(request, 'home.html')
 
 
-def register(request):
+# View para registrar novos usuários
+class RegisterView(CreateView):
+    model = User
+    form_class = UserCreationForm
+    template_name = 'register.html'
+    success_url = reverse_lazy('tasks')
 
-    if request.method == 'GET':
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        messages.success(self.request, "Conta criada com sucesso! Bem-vindo(a).")
+        return redirect(self.success_url)
 
-        return render(request,'register.html', {
-            'form' : UserCreationForm
-        } )   
-
-    else: 
-        if request.POST['password1'] == request.POST['password2']:
-
-            try: 
-                
-                user = User.objects.create_user(username=request.POST['username'], password=request.POST['password1'])
-                user.save()
-                
-                login(request, user)
-               
-                return redirect('tasks')
-                
-            except:
-                return render (request,'register.html', { 
-                    'form' : UserCreationForm ,
-                    "error": 'Usuário já existe'
-                    
-                    } ) 
-           
-        return render (request,'register.html', { 
-                    'form' : UserCreationForm ,
-                    "error": 'senhas são diferentes'
-                    
-                    } ) 
-
-def login_view(request):
-
-    if request.method == 'GET':
-        return render(request,'login_view.html', {
-        'form': AuthenticationForm
-        })
-
-    else:
-        user = authenticate(
-
-            request, username=request.POST['username'], password=request.POST['password'])
-
-        if user is None:
-            return render(request, 'login_view.html', {
-                    'form' : AuthenticationForm,
-                    'error': 'Usuário ou senha está incorreto'
-                })
-
-        else:
-                login(request, user)
-                return redirect('tasks')    
+    def form_invalid(self, form):
+        # Trata os erros de forma amigável e os envia para o template
+        for field, errors in form.errors.items():
+            for error in errors:
+                if field == '__all__':
+                    # Mensagens de erro gerais (não relacionadas a um campo específico)
+                    messages.error(self.request, error)
+                else:
+                    # Mensagens de erro específicas para cada campo
+                    messages.error(self.request, f"{field.capitalize()}: {error}")
+        
+        return self.render_to_response(self.get_context_data(form=form))
 
 
-@login_required   
-def sair(request):
-    logout (request)
-    return redirect('home')
+# View personalizada para login
+class CustomLoginView(LoginView):
+    template_name = 'login_view.html'
+    next_page = reverse_lazy('tasks')
 
-@login_required       
-def tasks(request):
-    return render(request,'tasks.html')
 
-@login_required
-def criando_tarefa(request, task_id=None):
-    if task_id:
-        task = get_object_or_404(Task, id=task_id, user=request.user)
-    else:
-        task = None
+# View personalizada para logout
+class CustomLogoutView(LogoutView):
+    next_page = reverse_lazy('home')
 
-    if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+
+# View para listar tarefas pendentes
+class TaskListView(LoginRequiredMixin, ListView):
+    model = Task
+    template_name = 'tasks.html'
+    context_object_name = 'tasks'
+
+    def get_queryset(self):
+        return Task.objects.filter(
+            user=self.request.user,
+            datecompleted__isnull=True
+        ).order_by('-created')
+
+    def post(self, request, *args, **kwargs):
+        form = TaskForm(request.POST)
+        tasks = self.get_queryset()  # Recupera tarefas existentes
+
         if form.is_valid():
-            new_task = form.save(commit=False)
-            new_task.user = request.user
-            new_task.updated = timezone.now()
-            if not task:
-                new_task.created = timezone.now()  # Apenas cria um novo timestamp se for uma nova tarefa
-            new_task.save()
-            return redirect('tasks')  # Redireciona para a lista de tarefas
-        else:
-            return render(request, 'criando_tarefa.html', {'form': form, 'task': task, 'error': 'Erro ao salvar a tarefa'})
-    else:
-        form = TaskForm(instance=task)
-        return render(request, 'criando_tarefa.html', {'form': form, 'task': task})
+            task = form.save(commit=False)
+            task.user = request.user
+            task.created = timezone.now()
+            task.updated = timezone.now()
+            task.save()
+            return render(request, self.template_name, {'tasks': tasks, 'form': form})
+
+        return render(request, self.template_name, {'tasks': tasks, 'form': form})
 
 
-@login_required   
-def tasks(request):
-    tasks =  Task.objects.filter(user=request.user, datecompleted__isnull=True)
-    return render(request, 'tasks.html', {'tasks' : tasks})
+# View para criar uma nova tarefa
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'criando_tarefa.html'
 
-@login_required  
-def task_detalhe(request, task_id): 
-    if request.method == 'GET':
-        task = get_object_or_404(Task, pk=task_id, user=request.user)
-        form = TaskForm(instance=task)
-        return render(request, 'task_detalhe.html', {
-            'task': task,
-            'form': form,
-            'created': task.created,
-            'updated': task.updated,
-            'status': task.status
-        }) 
-
-
-#completar tarefa
-@login_required
-def complete_tarefa(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
-
-    if request.method == 'POST':
-        task.datecompleted = timezone.now()
-        task.status = 'completa'  # Alterando o status da tarefa
+    def form_valid(self, form):
+        task = form.save(commit=False)
+        task.user = self.request.user
+        task.created = timezone.now()
+        task.updated = timezone.now()
         task.save()
         return redirect('tasks')
 
 
-#deletar tarefa
-@login_required
-def deletar_tarefa(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
+# View para atualizar uma tarefa existente
+class TaskUpdateView(LoginRequiredMixin, UpdateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'criando_tarefa.html'
 
-    if request.method == 'POST':
-        task.delete()
+    def form_valid(self, form):
+        task = form.save(commit=False)
+        task.updated = timezone.now()
+        task.save()
         return redirect('tasks')
 
 
+# View para exibir detalhes de uma tarefa
+class TaskDetailView(LoginRequiredMixin, DetailView):
+    model = Task
+    template_name = 'task_detalhe.html'
+    context_object_name = 'task'
 
-#exibir todas as tarefas completadas
-@login_required  
-def exibir_tarefas_completadas(request):
-    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by 
-    ('-datecompleted') 
-    return render(request, 'tasks.html', { 'tasks' : tasks })
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task = context['task']
+        # Adiciona informações extras para o contexto da tarefa
+        context.update({
+            'is_completed': bool(task.datecompleted),
+            'is_important': getattr(task, 'important', False)  # Verifica atributo opcional
+        })
+        return context
+
+
+# View para marcar uma tarefa como completa
+class TaskCompleteView(LoginRequiredMixin, UpdateView):
+    model = Task
+    fields = []
+    template_name = 'task_detalhe.html'
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        if task.datecompleted is None:  # Evita atualização redundante
+            task.datecompleted = timezone.now()
+            task.save()
+        return redirect('tasks')
+
+
+# View para excluir uma tarefa
+class TaskDeleteView(LoginRequiredMixin, DeleteView):
+    model = Task
+    template_name = 'task_confirm_delete.html'
+    success_url = reverse_lazy('completed_tasks')
+
+    def get_queryset(self):
+        # Garante que apenas tarefas do usuário logado sejam manipuladas
+        return Task.objects.filter(user=self.request.user)
+
+
+# View para listar tarefas concluídas
+class CompletedTaskListView(LoginRequiredMixin, ListView):
+    model = Task
+    template_name = 'completed_tasks.html'
+    context_object_name = 'tasks'
+
+    def get_queryset(self):
+        return Task.objects.filter(
+            user=self.request.user,
+            datecompleted__isnull=False
+        ).order_by('-datecompleted')

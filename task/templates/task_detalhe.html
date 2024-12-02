@@ -1,44 +1,35 @@
 {% extends 'menu.html' %}
 
 {% block content %}
-
 <main class="container mt-5">
-
-    <div class="row">
-
-        <div class="col-md-5 offset-md-3">
-
-            <h1 class="text-center text-warning mb-4">Detalhes das Tarefas</h1>
-
-            {{error}}
-
-            <form action="#" method="POST" class="card card-body shadow-lg p-4 rounded">
-
-                {% csrf_token %}
-                {{form.as_p}}
-
-                <button type="submit" class="btn btn-warning w-100 mt-2">Atualizar</button>
-
-            </form>
-
-            <div class="mt-5 d-flex justify-content-between">
-
-                <form action="{% url 'complete_tarefa.html' task.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success w-48">Completar</button>
-                </form>
-
-                <form action="{% url 'deletar_tarefa' task.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger w-48">Deletar</button>
-                </form>
-
-            </div>
-
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h2>{{ task.title }}</h2>
         </div>
+        <div class="card-body">
+            <p class="fw-bold">Descrição:</p>
+            <p>{{ task.describe }}</p>
 
+            <ul class="list-unstyled">
+                <li><strong>Status:</strong> {{ task.get_status_display }}</li>
+                <li><strong>Criada:</strong> {{ task.created|date:"d/m/Y H:i" }}</li>
+                <li><strong>Última atualização:</strong> {{ task.updated|date:"d/m/Y H:i" }}</li>
+                {% if task.datecompleted %}
+                    <li><strong>Concluída em:</strong> {{ task.datecompleted|date:"d/m/Y H:i" }}</li>
+                {% endif %}
+                <li><strong>Importante:</strong> {{ task.important|yesno:"Sim,Não" }}</li>
+            </ul>
+
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'edit_task' task.pk %}" class="btn btn-warning">Editar</a>
+                {% if not task.datecompleted %}
+                    <form method="post" action="{% url 'complete_task' task.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Marcar como Concluída</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
     </div>
-
 </main>
-
 {% endblock %}

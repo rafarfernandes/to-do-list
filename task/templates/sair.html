@@ -1,8 +1,12 @@
 {% extends 'menu.html' %}
 
-
 {% block content %}
-
     <h1> Sair</h1>
+
+    <!-- Formulário para o Logout -->
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sair</button>
+    </form>
 
 {% endblock %}
