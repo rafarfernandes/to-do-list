@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (
     home, 
     RegisterView, 
@@ -13,6 +13,11 @@ from .views import (
     CompletedTaskListView
 )
 
+
+
+
+
+
 urlpatterns = [
     path('', home, name='home'), 
     path('register/', RegisterView.as_view(), name='register'),  
@@ -24,5 +29,7 @@ urlpatterns = [
     path('task/create/', TaskCreateView.as_view(), name='create_task'),  
     path('task/<int:pk>/edit/', TaskUpdateView.as_view(), name='edit_task'), 
     path('task/<int:pk>/complete/', TaskCompleteView.as_view(), name='complete_task'),  
-    path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='delete_task'),  
+    path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='delete_task'), 
+     
+
 ]

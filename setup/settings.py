@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os  
 from dotenv import load_dotenv
+from datetime import timedelta
+
 
 
 load_dotenv()
@@ -43,7 +45,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'task',
+    'rest_framework', 
+    'rest_framework_simplejwt',
+    
 ]
+
+
+
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -113,13 +124,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
