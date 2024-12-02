@@ -139,10 +139,19 @@ REST_FRAMEWORK = {
     ),
 }
 
-# Ativar HTTPS
-SECURE_SSL_REDIRECT = True  
-SESSION_COOKIE_SECURE = True  
-CSRF_COOKIE_SECURE = True  
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',  # Usando o Redis como backend de cache
+        'LOCATION': 'redis://127.0.0.1:6379/1',  # URL do servidor Redis (verifique o IP e a porta)
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # Cliente padrão para comunicação com o Redis
+        },
+        'KEY_PREFIX': 'to_do_list'  # Prefixo para as chaves no Redis (ajuda a evitar conflitos entre diferentes apps)
+    }
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'  # Armazenar sessões no cache
+SESSION_CACHE_ALIAS = 'default'  # Usar o cache 'default' (configurado acima) para as sessões
 
 
 # Internationalization
