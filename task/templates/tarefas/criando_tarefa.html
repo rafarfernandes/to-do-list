@@ -4,8 +4,8 @@
 {% block content %}
 <main class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="col-md-8 col-lg-6">
-        <div class="card shadow-lg rounded" style="background-color: #f0f4f8;">
-            <div class="card-header text-center py-3" style="background-color: #007bff; color: #ffffff;">
+        <div class="card shadow-lg rounded" style="background-color: #f7f9fc;">
+            <div class="card-header text-center py-4" style="background-color: #4e54c8; color: #ffffff;">
                 <h2 class="mb-0">{{ task|default:''|yesno:"Editar Tarefa,Criar Tarefa" }}</h2>
             </div>
             <div class="card-body">
@@ -25,30 +25,40 @@
                 </div>
                 {% endif %}
 
-                <form method="POST">
+                <form method="POST" class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div class="mb-4">
                         <label for="title" class="form-label fw-bold">Título</label>
-                        {{ form.title }}
+                        <div class="input-group">
+                            {{ form.title }}
+                        </div>
                     </div>
                     <div class="mb-4">
                         <label for="describe" class="form-label fw-bold">Descrição</label>
-                        {{ form.describe }}
+                        <div class="input-group">
+                            {{ form.describe }}
+                        </div>
                     </div>
                     <div class="mb-4">
                         <label for="datecompleted" class="form-label fw-bold">Data de Conclusão (opcional)</label>
-                        {{ form.datecompleted }}
+                        <div class="input-group">
+                            {{ form.datecompleted }}
+                        </div>
                     </div>
                     <div class="mb-4">
                         <label for="status" class="form-label fw-bold">Status</label>
-                        {{ form.status }}
+                        <div class="input-group">
+                            {{ form.status }}
+                        </div>
                     </div>
                     <div class="mb-4">
                         <label for="important" class="form-label fw-bold">Importante</label>
-                        {{ form.important }}
+                        <div class="input-group">
+                            {{ form.important }}
+                        </div>
                     </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary btn-lg">
                             {{ task|default:''|yesno:"Atualizar Tarefa,Salvar Tarefa" }}
                         </button>
                     </div>
@@ -57,4 +67,7 @@
         </div>
     </div>
 </main>
+
+{% include 'partials/_footer.html' %}
+
 {% endblock %}

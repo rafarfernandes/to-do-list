@@ -52,9 +52,10 @@ class TaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
+        # Exibe apenas as tarefas pendentes
         return Task.objects.filter(
             user=self.request.user,
-            datecompleted__isnull=True
+            datecompleted__isnull=True  # Garantir que a data de conclusão seja nula
         ).order_by('-created')
 
     def post(self, request, *args, **kwargs):
@@ -82,7 +83,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         task.updated = timezone.now()
         task.save()
         messages.success(self.request, "Tarefa criada com sucesso!")
-        return redirect('tasks')
+        return redirect('tasks')  # Redireciona para a lista de tarefas pendentes
 
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
@@ -107,8 +108,8 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         task = context['task']
         context.update({
-            'is_completed': bool(task.datecompleted),
-            'is_important': getattr(task, 'important', False)
+            'is_completed': bool(task.datecompleted),  # Verifica se a tarefa foi concluída
+            'is_important': getattr(task, 'important', False)  # Se a tarefa for importante
         })
         return context
 
@@ -124,13 +125,13 @@ class TaskCompleteView(LoginRequiredMixin, UpdateView):
             task.datecompleted = timezone.now()
             task.save()
             messages.success(request, "Tarefa marcada como concluída!")
-        return redirect('tasks')
+        return redirect('tasks')  # Redireciona para a lista de tarefas pendentes
 
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
-    template_name = 'task_confirm_delete.html'
-    success_url = reverse_lazy('completed_tasks')
+    template_name = 'tarefas/task_confirm_delete.html'
+    success_url = reverse_lazy('completed_tasks')  # Redireciona para as tarefas concluídas
 
     def get_queryset(self):
         return Task.objects.filter(user=self.request.user)
@@ -146,7 +147,8 @@ class CompletedTaskListView(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
+        # Exibe apenas as tarefas concluídas
         return Task.objects.filter(
             user=self.request.user,
-            datecompleted__isnull=False
+            datecompleted__isnull=False  # Garantir que a data de conclusão não seja nula
         ).order_by('-datecompleted')

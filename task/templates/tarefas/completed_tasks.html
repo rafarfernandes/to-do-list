@@ -13,7 +13,7 @@
                     <ul class="list-unstyled">
                         <li><strong>Concluída em:</strong> {{ task.datecompleted|date:"d/m/Y H:i" }}</li>
                     </ul>
-                    <form method="post" action="{% url 'delete_task' task.pk %}">
+                    <form method="post" action="{% url 'task_delete' task.pk %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
                     </form>

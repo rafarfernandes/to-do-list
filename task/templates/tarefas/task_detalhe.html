@@ -23,7 +23,7 @@
             <div class="d-flex justify-content-between">
                 <a href="{% url 'edit_task' task.pk %}" class="btn btn-warning">Editar</a>
                 {% if not task.datecompleted %}
-                    <form method="post" action="{% url 'complete_task' task.pk %}">
+                    <form method="post" action="{% url 'task_complete' task.pk %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success">Marcar como Concluída</button>
                     </form>

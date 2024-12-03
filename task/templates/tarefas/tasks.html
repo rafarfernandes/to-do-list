@@ -2,10 +2,8 @@
 
 {% block content %}
 <main class="container mt-5">
-    <h1 class="text-center text-primary">Tarefas</h1>
+    <h1 class="text-center text-primary">Tarefas Pendentes</h1>
 
-
-    
     {% if tasks %}
         {% for task in tasks %}
             <div class="card shadow-sm mb-3">
@@ -18,15 +16,19 @@
                         <li><strong>Status:</strong> {{ task.get_status_display }}</li>
                     </ul>
                     <div class="d-flex justify-content-between">
-                        <a href="{% url 'task_detail' task.pk %}" class="btn btn-info btn-sm">Detalhes</a>
                         <a href="{% url 'edit_task' task.pk %}" class="btn btn-warning btn-sm">Editar</a>
+
+                        <form method="post" action="{% url 'task_completed' task.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm">Concluir</button>
+                        </form>
                     </div>
                 </div>
             </div>
         {% endfor %}
     {% else %}
         <div class="alert alert-info text-center">
-            <strong>Não há tarefas no momento.</strong>
+            <strong>Não há tarefas pendentes no momento.</strong>
         </div>
     {% endif %}
 </main>
