@@ -142,7 +142,7 @@ REST_FRAMEWORK = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',  # Usando o Redis como backend de cache
-        'LOCATION': 'redis://127.0.0.1:6379/1',  # URL do servidor Redis (verifique o IP e a porta)
+        'LOCATION': 'https://gerenciador-tarefa-c855a7a23455.herokuapp.com/',  # URL do servidor Redis (verifique o IP e a porta)
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # Cliente padrão para comunicação com o Redis
         },
