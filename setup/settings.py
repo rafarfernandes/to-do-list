@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import django_heroku
 from pathlib import Path
 import os  
 from dotenv import load_dotenv
@@ -38,7 +38,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://gerenciador-tarefa-c855a7a23455.herokuapp.com/']
 
 
 # Application definition
@@ -177,3 +177,6 @@ LOGIN_URL = 'login_view'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+django_heroku.settings(locals())
