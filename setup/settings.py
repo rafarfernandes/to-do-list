@@ -14,6 +14,7 @@ from pathlib import Path
 import os  
 from dotenv import load_dotenv
 import environ
+import django_heroku
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -153,3 +154,4 @@ LOGIN_URL = 'login_view'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+django_heroku.settings(locals())
