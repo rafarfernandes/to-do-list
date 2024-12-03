@@ -32,48 +32,6 @@
       color: #4e54c8;
   }
 
-  
-  footer {
-      background: linear-gradient(to right, #4e54c8, #8f94fb);
-      color: white;
-      padding: 15px 0;
-      width: 100%;
-      text-align: center;
-  }
-
-  footer a {
-      color: #ffdd57;
-      text-decoration: none;
-  }
-
-  footer a:hover {
-      text-decoration: underline;
-  }
-
-  .social-icons a {
-      color: white;
-      margin: 0 15px;
-      font-size: 1.5rem;
-  }
-
-  .social-icons a:hover {
-      color: #ffdd57;
-  }
-
-  .footer-text {
-      font-size: 0.9rem;
-      color: white;
-  }
-
-  @media (max-width: 768px) {
-      .footer-text {
-          font-size: 0.8rem;
-      }
-
-      .social-icons {
-          margin-top: 10px;
-      }
-  }
 
   
   .content {
@@ -151,15 +109,6 @@
 </section>
 
 
-<footer>
-  <div class="container">
-      <div class="row">
-          <div class="col-12">
-              <p class="footer-text mb-2">© 2024 Gerenciador de Tarefas. Todos os direitos reservados.</p>
-              <p class="footer-text mb-2">Desenvolvido por <a href="https://www.linkedin.com/in/rafaelrofernandes/" target="_blank">Rafael Fernandes</a></p>
-          </div>
-      </div>
-  </div>
-</footer>
+{% include 'partials/_footer.html' %}
 
 {% endblock %}

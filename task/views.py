@@ -10,7 +10,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Task
 from .forms import TaskForm
 from django.contrib import messages
-from .cache_utils import set_to_cache, get_from_cache
+
 
 def home(request):
     return render(request, 'home.html')
@@ -19,14 +19,12 @@ def home(request):
 class RegisterView(CreateView):
     model = User
     form_class = UserCreationForm
-    template_name = 'register.html'
+    template_name = 'usuarios/register.html'
     success_url = reverse_lazy('tasks')
 
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        # Armazenando no cache após o login do usuário
-        set_to_cache(f"user_{user.id}_authenticated", True, timeout=3600)
         messages.success(self.request, "Conta criada com sucesso! Bem-vindo(a).")
         return redirect(self.success_url)
 
@@ -40,7 +38,7 @@ class RegisterView(CreateView):
 
 
 class CustomLoginView(LoginView):
-    template_name = 'login_view.html'
+    template_name = 'usuarios/login_view.html'
     next_page = reverse_lazy('tasks')
 
 
@@ -50,7 +48,7 @@ class CustomLogoutView(LogoutView):
 
 class TaskListView(LoginRequiredMixin, ListView):
     model = Task
-    template_name = 'tasks.html'
+    template_name = 'tarefas/tasks.html'
     context_object_name = 'tasks'
 
     def get_queryset(self):
@@ -61,22 +59,21 @@ class TaskListView(LoginRequiredMixin, ListView):
 
     def post(self, request, *args, **kwargs):
         form = TaskForm(request.POST)
-        tasks = self.get_queryset()
         if form.is_valid():
             task = form.save(commit=False)
             task.user = request.user
             task.created = timezone.now()
             task.updated = timezone.now()
             task.save()
-            # Armazenando tarefa no cache
-            set_to_cache(f"task_{task.id}_details", task, timeout=3600)
+            messages.success(request, "Tarefa criada com sucesso!")
+        tasks = self.get_queryset()  # Para renderizar as tarefas novamente
         return render(request, self.template_name, {'tasks': tasks, 'form': form})
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
-    template_name = 'criando_tarefa.html'
+    template_name = 'tarefas/criando_tarefa.html'
 
     def form_valid(self, form):
         task = form.save(commit=False)
@@ -84,40 +81,31 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         task.created = timezone.now()
         task.updated = timezone.now()
         task.save()
-        # Armazenando tarefa no cache
-        set_to_cache(f"task_{task.id}_details", task, timeout=3600)
+        messages.success(self.request, "Tarefa criada com sucesso!")
         return redirect('tasks')
 
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
-    template_name = 'criando_tarefa.html'
+    template_name = 'tarefas/criando_tarefa.html'
 
     def form_valid(self, form):
         task = form.save(commit=False)
         task.updated = timezone.now()
         task.save()
-        # Atualizando o cache com a tarefa atualizada
-        set_to_cache(f"task_{task.id}_details", task, timeout=3600)
+        messages.success(self.request, "Tarefa atualizada com sucesso!")
         return redirect('tasks')
 
 
 class TaskDetailView(LoginRequiredMixin, DetailView):
     model = Task
-    template_name = 'task_detalhe.html'
+    template_name = 'tarefas/task_detalhe.html'
     context_object_name = 'task'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         task = context['task']
-        # Tentando recuperar tarefa do cache
-        cached_task = get_from_cache(f"task_{task.id}_details")
-        if cached_task:
-            context['task'] = cached_task
-        else:
-            # Caso não encontre no cache, armazena no cache
-            set_to_cache(f"task_{task.id}_details", task, timeout=3600)
         context.update({
             'is_completed': bool(task.datecompleted),
             'is_important': getattr(task, 'important', False)
@@ -127,16 +115,15 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
 
 class TaskCompleteView(LoginRequiredMixin, UpdateView):
     model = Task
-    fields = []
-    template_name = 'task_detalhe.html'
+    fields = []  # Nenhum campo é necessário para a conclusão
+    template_name = 'tarefas/task_detalhe.html'
 
     def post(self, request, *args, **kwargs):
         task = self.get_object()
         if task.datecompleted is None:
             task.datecompleted = timezone.now()
             task.save()
-        # Atualizando o cache com o status de completado
-        set_to_cache(f"task_{task.id}_completed", True, timeout=3600)
+            messages.success(request, "Tarefa marcada como concluída!")
         return redirect('tasks')
 
 
@@ -148,10 +135,14 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         return Task.objects.filter(user=self.request.user)
 
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Tarefa excluída com sucesso!")
+        return super().delete(request, *args, **kwargs)
+
 
 class CompletedTaskListView(LoginRequiredMixin, ListView):
     model = Task
-    template_name = 'completed_tasks.html'
+    template_name = 'tarefas/completed_tasks.html'
     context_object_name = 'tasks'
 
     def get_queryset(self):

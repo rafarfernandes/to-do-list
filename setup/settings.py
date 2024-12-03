@@ -9,36 +9,28 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-import django_heroku
+
 from pathlib import Path
 import os  
 from dotenv import load_dotenv
 import environ
 
 env = environ.Env(
-    # Define valores padrão e tipos (opcional)
     DEBUG=(bool, False)
 )
 
-# Lê o arquivo .env
 environ.Env.read_env()
 
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://gerenciador-tarefa-c855a7a23455.herokuapp.com/']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -55,11 +47,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     
 ]
-
-
-
-
-
 
 
 MIDDLEWARE = [
@@ -139,19 +126,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',  # Usando o Redis como backend de cache
-        'LOCATION': 'https://gerenciador-tarefa-c855a7a23455.herokuapp.com/',  # URL do servidor Redis (verifique o IP e a porta)
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',  # Cliente padrão para comunicação com o Redis
-        },
-        'KEY_PREFIX': 'to_do_list'  # Prefixo para as chaves no Redis (ajuda a evitar conflitos entre diferentes apps)
-    }
-}
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'  # Armazenar sessões no cache
-SESSION_CACHE_ALIAS = 'default'  # Usar o cache 'default' (configurado acima) para as sessões
 
 
 # Internationalization
@@ -179,4 +153,3 @@ LOGIN_URL = 'login_view'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-django_heroku.settings(locals())
