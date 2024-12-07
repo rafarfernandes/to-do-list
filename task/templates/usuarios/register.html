@@ -25,7 +25,7 @@
             </div>
             {% endif %}
 
-            <form method="POST">
+            <form method="POST" id="register-form" onsubmit="return handleRegister(event)">
                 {% csrf_token %}
                 
                 <div class="form-group mb-4">
@@ -90,3 +90,5 @@
 
 {% include 'partials/_footer.html' %}
 {% endblock %}
+
+<script src="{% static 'js/register.js' %}"></script>
