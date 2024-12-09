@@ -17,7 +17,7 @@
             </div>
             {% endif %}
 
-            <form method="POST" action="{% url 'login_view' %}">
+            <form method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
                 <div class="form-group mb-4">
                     <label for="username" style="color: #343a40; font-weight: bold;">Nome de Usuário</label>

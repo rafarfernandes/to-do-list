@@ -9,7 +9,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Task
 from .forms import TaskForm
+import requests 
 from django.contrib import messages
+from django.conf import settings
 
 
 def home(request):
@@ -38,37 +40,61 @@ class RegisterView(CreateView):
 
 
 class CustomLoginView(LoginView):
-    template_name = 'usuarios/login_view.html'
-    next_page = reverse_lazy('tasks')
+    template_name = 'usuarios/login.html'
+
+    def form_valid(self, form):
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password')
+        
+        response = requests.post('http://localhost:8000/api/token/', data={'username': username, 'password': password})
+
+        if response.status_code == 200:
+            tokens = response.json()
+            access_token = tokens.get('access')
+            refresh_token = tokens.get('refresh')
+            
+            response = redirect('tasks')  
+            
+            response.set_cookie('access_token', access_token, httponly=True, secure=True, samesite='Strict')
+            response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True, samesite='Strict')
+            return response
+        else:
+            messages.error(self.request, "Credenciais inválidas.")
+            return self.form_invalid(form)
 
 
 class CustomLogoutView(LogoutView):
-    next_page = reverse_lazy('home')
+    next_page = reverse_lazy('home')  
+    
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        
+        return response
 
 
+# Tarefas Pendentes
 class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'tarefas/tasks.html'
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        # Exibe apenas as tarefas pendentes
-        return Task.objects.filter(
-            user=self.request.user,
-            datecompleted__isnull=True  # Garantir que a data de conclusão seja nula
-        ).order_by('-created')
+        
+        return Task.objects.filter(user=self.request.user, datecompleted__isnull=True).order_by('-created')
 
     def post(self, request, *args, **kwargs):
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save(commit=False)
-            task.user = request.user
+            task.user = self.request.user
             task.created = timezone.now()
             task.updated = timezone.now()
             task.save()
             messages.success(request, "Tarefa criada com sucesso!")
-        tasks = self.get_queryset()  # Para renderizar as tarefas novamente
-        return render(request, self.template_name, {'tasks': tasks, 'form': form})
+        return redirect('tasks')
 
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
@@ -83,7 +109,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         task.updated = timezone.now()
         task.save()
         messages.success(self.request, "Tarefa criada com sucesso!")
-        return redirect('tasks')  # Redireciona para a lista de tarefas pendentes
+        return redirect('tasks')
 
 
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
@@ -108,30 +134,50 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         task = context['task']
         context.update({
-            'is_completed': bool(task.datecompleted),  # Verifica se a tarefa foi concluída
-            'is_important': getattr(task, 'important', False)  # Se a tarefa for importante
+            'is_completed': bool(task.datecompleted),  
+            'is_important': getattr(task, 'important', False)  
         })
         return context
 
 
+# Concluir Tarefa
 class TaskCompleteView(LoginRequiredMixin, UpdateView):
     model = Task
-    fields = []  # Nenhum campo é necessário para a conclusão
+    fields = []  
     template_name = 'tarefas/task_detalhe.html'
 
     def post(self, request, *args, **kwargs):
-        task = self.get_object()
+        task = self.get_object()  
+
         if task.datecompleted is None:
-            task.datecompleted = timezone.now()
+            task.datecompleted = timezone.now()  
             task.save()
             messages.success(request, "Tarefa marcada como concluída!")
-        return redirect('tasks')  # Redireciona para a lista de tarefas pendentes
+        else:
+            messages.info(request, "Esta tarefa já está concluída.")
+
+        return redirect('completed_tasks')  
+
+
+# Tarefas Concluídas
+class CompletedTaskListView(LoginRequiredMixin, ListView):
+    model = Task
+    template_name = 'tarefas/completed_tasks.html'
+    context_object_name = 'tasks'
+
+    def get_queryset(self):
+       
+        return Task.objects.filter(
+            user=self.request.user,
+            datecompleted__isnull=False  
+        ).order_by('-datecompleted')
+
 
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
     template_name = 'tarefas/task_confirm_delete.html'
-    success_url = reverse_lazy('completed_tasks')  # Redireciona para as tarefas concluídas
+    success_url = reverse_lazy('completed_tasks')  
 
     def get_queryset(self):
         return Task.objects.filter(user=self.request.user)
@@ -139,16 +185,3 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Tarefa excluída com sucesso!")
         return super().delete(request, *args, **kwargs)
-
-
-class CompletedTaskListView(LoginRequiredMixin, ListView):
-    model = Task
-    template_name = 'tarefas/completed_tasks.html'
-    context_object_name = 'tasks'
-
-    def get_queryset(self):
-        # Exibe apenas as tarefas concluídas
-        return Task.objects.filter(
-            user=self.request.user,
-            datecompleted__isnull=False  # Garantir que a data de conclusão não seja nula
-        ).order_by('-datecompleted')

@@ -1,67 +1,9 @@
 {% extends 'menu.html' %}
+{% load static %}
 
 {% block content %}
-<style>
-  
-  .hero {
-      background: linear-gradient(to right, #4e54c8, #8f94fb);
-      color: white;
-      text-align: center;
-      padding: 80px 20px;
-  }
 
-  .features {
-      padding: 50px 0;
-      background-color: #f8f9fa;
-  }
-
-  .feature-box {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 30px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-  }
-
-  .feature-box:hover {
-      transform: translateY(-5px);
-  }
-
-  .feature-box i {
-      color: #4e54c8;
-  }
-
-
-  
-  .content {
-      padding-bottom: 20px; 
-  }
-
-  
-  .video-section {
-      background-color: #f8f9fa;
-      padding: 50px 0;
-  }
-
-  .video-section h2 {
-      text-align: center;
-      color: #4e54c8;
-      margin-bottom: 30px;
-  }
-
-  .video-container {
-      text-align: center;
-  }
-
-  .video-container iframe {
-      width: 100%;
-      max-width: 800px;
-      height: 450px;
-      border: none;
-  }
-</style>
-
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
 
 <section class="hero">
   <div class="container">
@@ -98,7 +40,6 @@
   </div>
 </section>
 
-
 <section class="video-section">
   <div class="container">
       <h2>Explicação e Utilização do To-Do List</h2>
@@ -108,7 +49,5 @@
   </div>
 </section>
 
-
 {% include 'partials/_footer.html' %}
-
 {% endblock %}

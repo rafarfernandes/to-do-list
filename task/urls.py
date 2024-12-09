@@ -16,7 +16,7 @@ from .views import (
 urlpatterns = [
     path('', home, name='home'), 
     path('register/', RegisterView.as_view(), name='register'),  
-    path('login/', CustomLoginView.as_view(), name='login_view'),  
+    path('login/', CustomLoginView.as_view(), name='login'),  
     path('logout/', CustomLogoutView.as_view(), name='logout'),  
     path('tasks/', TaskListView.as_view(), name='tasks'),  
     path('tasks/completed/', CompletedTaskListView.as_view(), name='completed_tasks'),  
@@ -25,4 +25,5 @@ urlpatterns = [
     path('task/<int:pk>/edit/', TaskUpdateView.as_view(), name='edit_task'), 
     path('task/<int:pk>/complete/', TaskCompleteView.as_view(), name='task_completed'),  
     path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='task_delete'), 
+    path('logout/', CustomLogoutView.as_view(), name='logout'), 
 ]
