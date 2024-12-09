@@ -1,93 +1,183 @@
-To-Do List - Django Project
-Visão Geral
-Este é um aplicativo de gerenciamento de tarefas (To-Do List) desenvolvido com o Framework Django. Permite que os usuários criem, atualizem e excluam tarefas de forma intuitiva. 
+# Gerenciador de Tarefas - **To Do List**
 
-Índice
-Instruções de Instalação
-Documentação das Rotas/Endpoints
-Tecnologias Utilizadas
+Este é um aplicativo de gerenciador de tarefas desenvolvido com **Django** e outras tecnologias modernas para a gestão de tarefas diárias. O objetivo deste aplicativo é permitir que os usuários se registrem, se autentiquem, criem, editem e excluam suas tarefas de forma prática.
 
+---
 
-Instruções de Instalação
-Siga os passos abaixo para configurar e executar o projeto localmente:
+## **Sumário**
 
-Pré-requisitos
-Python 3.8 ou superior
-Git
-Ambiente virtual (recomendado: venv)
-Gerenciador de pacotes pip
-Passo a Passo
-Clone o repositório
+- [Instruções de Instalação](#instruções-de-instalação)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Rotas e Endpoints](#rotas-e-endpoints)
+- [Como Usar](#como-usar)
+- [To Do List de Funcionalidades](#to-do-list-de-funcionalidades)
+
+---
+
+### **Instruções de Instalação**
+
+Para rodar a aplicação localmente, siga os seguintes passos:
+
+1. **Clone o repositório**:
+   ```bash
+   git clone https://github.com/seu-usuario/nome-do-repositorio.git
+   cd nome-do-repositorio
+Crie e ative um ambiente virtual (recomendado): Para sistemas Unix (Linux/macOS):
 
 bash
 Copiar código
-git clone <URL_DO_REPOSITORIO>
-cd to-do-list
-Crie e ative o ambiente virtual
+python3 -m venv venv
+source venv/bin/activate
+Para Windows:
 
 bash
 Copiar código
 python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
-Instale as dependências
+venv\Scripts\activate
+Instale as dependências do projeto:
 
 bash
 Copiar código
 pip install -r requirements.txt
-Configure as variáveis de ambiente
-Crie um arquivo .env na raiz do projeto e defina as configurações necessárias. Exemplo:
+Configure o banco de dados: Se estiver usando MySQL (como recomendado):
 
-env
+Instale o MySQL no seu sistema e crie um banco de dados com o nome da sua escolha.
+No arquivo settings.py, configure a conexão com o banco MySQL.
+Exemplo de configuração:
+
+python
 Copiar código
-DEBUG=True
-SECRET_KEY=sua-chave-secreta
-Execute as migrações do banco de dados
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'nome_do_banco',
+        'USER': 'usuario',
+        'PASSWORD': 'senha',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+Realize as migrações do banco de dados:
 
 bash
 Copiar código
 python manage.py migrate
-Inicie o servidor de desenvolvimento
+Crie um superusuário (opcional):
+
+bash
+Copiar código
+python manage.py createsuperuser
+Inicie o servidor de desenvolvimento:
 
 bash
 Copiar código
 python manage.py runserver
-Acesse o aplicativo
-Abra o navegador 
+A aplicação estará disponível em http://127.0.0.1:8000.
 
-Documentação das Rotas/Endpoints
-Rotas Públicas
-Método	Endpoint	Descrição
-GET	/	Página inicial
-GET	/login/	Página de login
-GET	/register/	Página de registro
-Rotas Protegidas
-Método	Endpoint	Descrição
-GET	/tasks/	Lista de todas as tarefas do usuário
-POST	/tasks/add/	Criação de uma nova tarefa
-GET	/tasks/<id>/	Visualiza os detalhes de uma tarefa
-PUT	/tasks/<id>/	Atualiza os dados de uma tarefa
-DELETE	/tasks/<id>/	Exclui uma tarefa
 Tecnologias Utilizadas
-Backend: Django 4.2
-Escolhi Django devido à sua robustez, facilidade para trabalhar com modelos ORM e recursos nativos para autenticação e administração.
+Django: O framework principal utilizado para construir a aplicação. O Django é ideal para esse tipo de aplicação, pois é robusto, seguro e rápido para desenvolvimento de back-end. Ele inclui funcionalidades como autenticação de usuários, ORM (Object-Relational Mapping) para interagir com bancos de dados, entre outros.
 
-Frontend: HTML, Bootstrap 5 e um pouco de CSS
-Utilizado para estilizar a interface do usuário com responsividade e consistência.
+MySQL: Sistema de gerenciamento de banco de dados relacional. Utilizado para armazenar as tarefas, usuários e outras informações da aplicação. O MySQL foi escolhido devido à sua confiabilidade, escalabilidade e compatibilidade com Django.
 
-Banco de Dados: MYSQL 
-Por ser um banco de dados leve e prático, foi escolhido para simplificar o ambiente de desenvolvimento.
+Redis : Utilizado para melhorar o desempenho da aplicação, armazenando dados temporários (como sessões ou cache). Ele pode ser configurado para otimizar o uso de recursos em uma aplicação de larga escala.
 
-Outros:
+Certbot & Nginx: Para configuração do HTTPS e proxy reverso, garantindo que a aplicação seja segura e tenha uma comunicação criptografada com os usuários.
 
-dotenv para gerenciamento de variáveis de ambiente.
-gunicorn (em produção).
+Gunicorn: Servidor WSGI para Python, utilizado para rodar a aplicação Django em produção. O Gunicorn trabalha muito bem com o Nginx, que atua como proxy reverso.
 
+Rotas e Endpoints
+A seguir, estão listados os principais endpoints e suas funções na aplicação:
 
 Autenticação de Usuário
-Para proteger os dados dos usuários e permitir experiências personalizadas.
+POST /api/token/ - Login e geração de tokens JWT:
 
-CRUD com ORM
-Operações de Create, Read, Update e Delete foram implementadas para gerenciar as tarefas.
+Body:
+json
+Copiar código
+{
+  "username": "user1",
+  "password": "password123"
+}
+Resposta (caso sucesso):
+json
+Copiar código
+{
+  "access": "access_token",
+  "refresh": "refresh_token"
+}
+POST /api/token/refresh/ - Renova o token de acesso com um token de atualização:
 
-Organização de Código
-Utilizei boas práticas, como separação de responsabilidades em views, templates e URLs.
+Body:
+json
+Copiar código
+{
+  "refresh": "refresh_token"
+}
+Resposta:
+json
+Copiar código
+{
+  "access": "new_access_token"
+}
+Gerenciamento de Tarefas
+GET /tasks/ - Lista todas as tarefas do usuário autenticado:
+
+Resposta:
+json
+Copiar código
+[
+  {
+    "id": 1,
+    "title": "Tarefa 1",
+    "description": "Descrição da tarefa",
+    "created_at": "2024-12-09T10:00:00Z",
+    "completed": false
+  }
+]
+POST /tasks/ - Cria uma nova tarefa:
+
+Body:
+json
+Copiar código
+{
+  "title": "Nova Tarefa",
+  "description": "Descrição da tarefa"
+}
+Resposta:
+json
+Copiar código
+{
+  "id": 2,
+  "title": "Nova Tarefa",
+  "description": "Descrição da tarefa",
+  "created_at": "2024-12-09T12:00:00Z",
+  "completed": false
+}
+PUT /tasks/{id}/ - Atualiza uma tarefa existente:
+
+Body:
+json
+Copiar código
+{
+  "title": "Tarefa Atualizada",
+  "description": "Descrição atualizada",
+  "completed": true
+}
+DELETE /tasks/{id}/ - Deleta uma tarefa:
+
+Resposta: 204 No Content (sem corpo)
+Como Usar
+Após o deploy ou execução local, o usuário pode acessar a plataforma no endereço configurado.
+O cadastro de usuário é feito na página de registro, e o login é feito com o uso de tokens JWT.
+Após o login, o usuário pode acessar o painel de tarefas, onde pode criar, editar, visualizar e excluir suas tarefas.
+To Do List de Funcionalidades
+A seguir, a lista das funcionalidades a serem implementadas ou que estão em desenvolvimento:
+
+Cadastro de Usuário: O usuário pode criar uma conta para gerenciar suas tarefas.
+Login via JWT: O usuário faz login com credenciais, e um token de autenticação é gerado para sessões subsequentes.
+Gerenciamento de Tarefas: O usuário pode criar, editar, listar e excluir tarefas.
+Marcar Tarefa como Concluída: O usuário pode marcar tarefas como concluídas.
+Filtro de Tarefas: Exibir tarefas com base no status (pendente ou concluída).
+Notificações: Notificação quando uma tarefa for criada ou alterada.
+Conclusão
+Este gerenciador de tarefas foi desenvolvido para fornecer uma interface simples e intuitiva, utilizando Django para o backend, MySQL como banco de dados e JWT para a autenticação do usuário. Ele permite ao usuário gerenciar suas tarefas de forma eficiente, com autenticação segura e escalabilidade futura com Redis.

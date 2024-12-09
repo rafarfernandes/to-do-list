@@ -12,17 +12,17 @@ from .forms import TaskForm
 import requests 
 from django.contrib import messages
 from django.conf import settings
+from django.contrib.auth.forms import AuthenticationForm
 
 
 def home(request):
     return render(request, 'home.html')
 
-
 class RegisterView(CreateView):
     model = User
     form_class = UserCreationForm
     template_name = 'usuarios/register.html'
-    success_url = reverse_lazy('tasks')
+    success_url = reverse_lazy('login')
 
     def form_valid(self, form):
         user = form.save()
@@ -38,51 +38,63 @@ class RegisterView(CreateView):
                 )
         return self.render_to_response(self.get_context_data(form=form))
 
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.views.generic import FormView
 
-class CustomLoginView(LoginView):
+class CustomLoginView(FormView):
     template_name = 'usuarios/login.html'
+    form_class = AuthenticationForm  # Seu formulário de login
 
     def form_valid(self, form):
+        # Realiza a autenticação diretamente via Django
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password')
         
-        response = requests.post('http://localhost:8000/api/token/', data={'username': username, 'password': password})
+        # Autentica o usuário
+        user = authenticate(self.request, username=username, password=password)
 
-        if response.status_code == 200:
-            tokens = response.json()
-            access_token = tokens.get('access')
-            refresh_token = tokens.get('refresh')
-            
-            response = redirect('tasks')  
-            
+        if user is not None:
+            # Cria o token JWT
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            # Definindo o token nos cookies
+            response = redirect(self.get_success_url())
             response.set_cookie('access_token', access_token, httponly=True, secure=True, samesite='Strict')
             response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True, samesite='Strict')
+
+            messages.success(self.request, "Login realizado com sucesso!")
             return response
         else:
             messages.error(self.request, "Credenciais inválidas.")
             return self.form_invalid(form)
 
+    def get_success_url(self):
+        return self.request.GET.get('next', 'tasks')  # Redireciona para a página de tarefas ou a página solicitada
+
 
 class CustomLogoutView(LogoutView):
-    next_page = reverse_lazy('home')  
-    
+    next_page = '/' 
+
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
         
         response.delete_cookie('access_token')
         response.delete_cookie('refresh_token')
         
+        messages.success(request, "Logout realizado com sucesso!")
         return response
 
-
-# Tarefas Pendentes
 class TaskListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'tarefas/tasks.html'
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        
         return Task.objects.filter(user=self.request.user, datecompleted__isnull=True).order_by('-created')
 
     def post(self, request, *args, **kwargs):
@@ -95,7 +107,6 @@ class TaskListView(LoginRequiredMixin, ListView):
             task.save()
             messages.success(request, "Tarefa criada com sucesso!")
         return redirect('tasks')
-
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
@@ -111,7 +122,6 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Tarefa criada com sucesso!")
         return redirect('tasks')
 
-
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
@@ -123,7 +133,6 @@ class TaskUpdateView(LoginRequiredMixin, UpdateView):
         task.save()
         messages.success(self.request, "Tarefa atualizada com sucesso!")
         return redirect('tasks')
-
 
 class TaskDetailView(LoginRequiredMixin, DetailView):
     model = Task
@@ -139,8 +148,6 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
         })
         return context
 
-
-# Concluir Tarefa
 class TaskCompleteView(LoginRequiredMixin, UpdateView):
     model = Task
     fields = []  
@@ -158,21 +165,16 @@ class TaskCompleteView(LoginRequiredMixin, UpdateView):
 
         return redirect('completed_tasks')  
 
-
-# Tarefas Concluídas
 class CompletedTaskListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'tarefas/completed_tasks.html'
     context_object_name = 'tasks'
 
     def get_queryset(self):
-       
         return Task.objects.filter(
             user=self.request.user,
             datecompleted__isnull=False  
         ).order_by('-datecompleted')
-
-
 
 class TaskDeleteView(LoginRequiredMixin, DeleteView):
     model = Task
