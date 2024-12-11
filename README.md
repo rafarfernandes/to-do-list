@@ -77,7 +77,7 @@ A aplicação estará disponível em http://127.0.0.1:8000.
 Tecnologias Utilizadas
 Django: O framework principal utilizado para construir a aplicação. O Django é ideal para esse tipo de aplicação, pois é robusto, seguro e rápido para desenvolvimento de back-end. Ele inclui funcionalidades como autenticação de usuários, ORM (Object-Relational Mapping) para interagir com bancos de dados, entre outros.
 
-MySQL: Sistema de gerenciamento de banco de dados relacional. Utilizado para armazenar as tarefas, usuários e outras informações da aplicação. O MySQL foi escolhido devido à sua confiabilidade, escalabilidade e compatibilidade com Django.
+MariaDB: Sistema de gerenciamento de banco de dados relacional. Utilizado para armazenar as tarefas, usuários e outras informações da aplicação. O MariaDB foi escolhido devido à sua confiabilidade, escalabilidade e compatibilidade com Django.
 
 Redis : Utilizado para melhorar o desempenho da aplicação, armazenando dados temporários (como sessões ou cache). Ele pode ser configurado para otimizar o uso de recursos em uma aplicação de larga escala.
 
