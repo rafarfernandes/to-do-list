@@ -14,6 +14,7 @@ from pathlib import Path
 import os  
 from dotenv import load_dotenv
 import environ
+from decouple import config
 
 
 env = environ.Env(
@@ -29,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
@@ -88,8 +89,12 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',  # ou apenas 'db.sqlite3' se estiver na pasta principal
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),          # Nome do banco de dados
+        'USER': config('DB_USER'),          # Usuário do MySQL
+        'PASSWORD': config('DB_PASSWORD'),  # Senha do MySQL
+        'HOST': config('DB_HOST'),          # Endereço do servidor MySQL
+        'PORT': config('DB_PORT', default='3306'),  # Porta do MySQL
     }
 }
 
