@@ -26,7 +26,8 @@ environ.Env.read_env()
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+# Carregar o arquivo .env
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
