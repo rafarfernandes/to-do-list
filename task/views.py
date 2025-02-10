@@ -27,9 +27,8 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('login')
 
     def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        messages.success(self.request, "Conta criada com sucesso! Bem-vindo(a).")
+        form.save()  # Apenas salva o usuário, sem autenticar
+        messages.success(self.request, "Conta criada com sucesso! Agora faça login para acessar o sistema.")
         return redirect(self.success_url)
 
     def form_invalid(self, form):
