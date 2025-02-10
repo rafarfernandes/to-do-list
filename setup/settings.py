@@ -15,6 +15,7 @@ import os
 from dotenv import load_dotenv
 import environ
 
+load_dotenv()
 # Inicializa o django-environ
 env = environ.Env()
 
@@ -24,7 +25,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Outras configurações sensíveis
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
 DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['*']
