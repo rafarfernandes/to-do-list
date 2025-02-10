@@ -14,26 +14,18 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import environ
-from decouple import config
 
-
-# Carregar o arquivo .env
-BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')  # Carregar o .env o mais cedo possível
-
-# Inicializar o environ
-env = environ.Env(
-    DEBUG=(bool, False)
-)
-# Inicializa o objeto 'env' para ler o arquivo .env
+# Inicializa o django-environ
 env = environ.Env()
-environ.Env.read_env()  # Lê o arquivo .env
+
+# Define o caminho para o arquivo .env
+BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
-# Django settings
-SECRET_KEY = str(os.getenv('SECRET_KEY'))
-
-DEBUG = config('DEBUG', default=False, cast=bool)
+# Outras configurações sensíveis
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['*']
 
@@ -87,11 +79,11 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'db_tarefas',
-        'USER': 'root',
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 
