@@ -25,7 +25,8 @@ load_dotenv(BASE_DIR / '.env')  # Carregar o .env o mais cedo possível
 env = environ.Env(
     DEBUG=(bool, False)
 )
-environ.Env.read_env()  # Lê o arquivo .env
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 
 # Django settings
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
