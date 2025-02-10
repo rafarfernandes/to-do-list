@@ -25,7 +25,9 @@ load_dotenv(BASE_DIR / '.env')  # Carregar o .env o mais cedo possível
 env = environ.Env(
     DEBUG=(bool, False)
 )
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# Inicializa o objeto 'env' para ler o arquivo .env
+env = environ.Env()
+environ.Env.read_env()  # Lê o arquivo .env
 
 
 # Django settings
