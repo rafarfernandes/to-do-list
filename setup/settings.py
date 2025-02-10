@@ -78,16 +78,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'setup.wsgi.application'
 
-# Database
+
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),          # Nome do banco de dados
-        'USER': os.getenv('DB_USER'),          # Usuário do MySQL
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # Senha do MySQL
-        'HOST': os.getenv('DB_HOST'),          # Endereço do servidor MySQL
-        'PORT': os.getenv('DB_PORT', '3306'),  # Porta do MySQL
+        'NAME': env('DB_NAME'),          # Nome do banco de dados
+        'USER': env('DB_USER'),          # Usuário do MySQL
+        'PASSWORD': env('DB_PASSWORD'),  # Senha do MySQL
+        'HOST': env('DB_HOST', default='localhost'),          # Endereço do servidor MySQL
+        'PORT': env('DB_PORT', default='3306'),  # Porta do MySQL
     }
 }
 
