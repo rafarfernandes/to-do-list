@@ -11,33 +11,30 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os  
+import os
 from dotenv import load_dotenv
 import environ
 from decouple import config
 
 
+# Carregar o arquivo .env
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')  # Carregar o .env o mais cedo possível
+
+# Inicializar o environ
 env = environ.Env(
     DEBUG=(bool, False)
 )
+environ.Env.read_env()  # Lê o arquivo .env
 
-environ.Env.read_env()
-
-load_dotenv()
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-# Carregar o arquivo .env
-load_dotenv(BASE_DIR / '.env')
-
+# Django settings
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,10 +46,7 @@ INSTALLED_APPS = [
     'rest_framework', 
     'rest_framework_simplejwt',
     'drf_spectacular',
-    
-    
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -84,10 +78,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'setup.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -99,10 +91,8 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -130,11 +120,8 @@ REST_FRAMEWORK = {
     ),
 }
 
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'pt-br'
 
 TIME_ZONE = 'America/Sao_Paulo'
@@ -143,13 +130,9 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-
 STATIC_URL = '/static/'
-
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -160,7 +143,6 @@ LOGIN_URL = 'login'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 API_URL = 'http://localhost:8000/api'
