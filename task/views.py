@@ -16,9 +16,7 @@ from django.views.generic import FormView
 from rest_framework import generics, permissions
 from .serializers import TaskSerializer, UserSerializer
 
-# Restante do código...
 
-# Views do Frontend (mantidas como estão)
 def home(request):
     return render(request, 'home.html')
 

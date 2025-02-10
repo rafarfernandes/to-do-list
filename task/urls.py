@@ -11,8 +11,8 @@ from .views import (
     TaskCompleteView, 
     TaskDeleteView, 
     CompletedTaskListView,
-    TaskListAPIView,  # Nova view da API
-    TaskDetailAPIView,  # Nova view da API
+    TaskListAPIView,  
+    TaskDetailAPIView,  
 )
 
 urlpatterns = [
