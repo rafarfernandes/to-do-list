@@ -49,6 +49,8 @@ class CustomLoginView(FormView):
         user = authenticate(self.request, username=username, password=password)
 
         if user is not None:
+            login(self.request, user)  # Aqui chamamos o login corretamente
+
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
@@ -64,7 +66,8 @@ class CustomLoginView(FormView):
             return self.form_invalid(form)
 
     def get_success_url(self):
-        return self.request.GET.get('next', 'tasks')
+        return reverse_lazy('tasks')  # Garante que o redirecionamento funciona
+
 
 class CustomLogoutView(LogoutView):
     next_page = '/'
